@@ -28,7 +28,7 @@ const MealTypeButton = props => {
 export default MealTypeButton;
 
 const styles = StyleSheet.create({
-  buttonContainer: {
+  button: {
     width: 120,
     height: 120,
     backgroundColor: Colors.accent,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 10,
   },
-  button: {},
+  // button: {},
   text: {
     fontSize: 20,
     fontWeight: 'bold',

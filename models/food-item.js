@@ -1,20 +1,24 @@
 class FoodItem {
   constructor(
+    id,
     foodName,
+    brandOwner,
+    mealOrder,
     foodCategory,
     foodDescription,
-    calories,
-    gramsFiber,
-    gramsSugar,
-    servingSize
+    servingSize,
+    foodNutrients,
+    foodAmount
   ) {
+    this.id = id;
     this.foodName = foodName;
+    this.brandOwner = brandOwner;
+    this.mealOrder = mealOrder;
     this.foodCategory = foodCategory;
     this.foodDescription = foodDescription;
-    this.calories = calories;
-    this.gramsFiber = gramsFiber;
-    this.gramsSugar = gramsSugar;
     this.servingSize = servingSize;
+    this.foodNutrients = foodNutrients;
+    this.foodAmount = foodAmount;
   }
 }
 

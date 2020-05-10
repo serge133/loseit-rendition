@@ -1,1 +1,1 @@
-GET https://api.nal.usda.gov/fdc/v1/foods/search?api_key=dPgkKhhR7j8QVxIrzEIvjtgJRfMZ88QoshAZ1pef&query=Apple
+GET https://api.nal.usda.gov/fdc/v1/foods/search?api_key=dPgkKhhR7j8QVxIrzEIvjtgJRfMZ88QoshAZ1pef&query=Apple&dataType=Foundation,SR%20Legacy&pageSize=5&sortBy=description&sortOrder=asc

@@ -1,16 +1,21 @@
 import React from 'react';
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from './store/reducers/reducer';
-import { StyleSheet } from 'react-native';
+import foodReducer from './store/reducers/food';
+import ReduxThunk from 'redux-thunk';
+import { StyleSheet, YellowBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './navigation/RootNavigator';
 
 const rootReducer = combineReducers({
-  root: reducer,
+  food: foodReducer,
 });
 
-const store = createStore(rootReducer);
+YellowBox.ignoreWarnings([
+  'Non-serializable values were found in the navigation state',
+]);
+
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
   return (

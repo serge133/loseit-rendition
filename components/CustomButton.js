@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Colors from '../constants/colors';
+import colors from '../constants/colors';
 
 const CustomButton = props => {
   let ButtonComponent = TouchableOpacity;
@@ -18,11 +18,13 @@ const CustomButton = props => {
   }
 
   return (
-    <ButtonComponent onPress={props.onPress} style={styles.buttonContainer}>
-      <View style={styles.button}>
-        <Ionicons color="white" size={30} name={props.iconName} />
-      </View>
-    </ButtonComponent>
+    <View style={styles.buttonContainer}>
+      <ButtonComponent onPress={props.onPress}>
+        <View style={{ ...styles.button, ...props.style }}>
+          <Ionicons color={colors.accent} size={30} name={props.iconName} />
+        </View>
+      </ButtonComponent>
+    </View>
   );
 };
 
@@ -31,7 +33,9 @@ export default CustomButton;
 const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
-    backgroundColor: Colors.accent,
+  },
+  button: {
+    // backgroundColor: 'white',
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import * as foodActions from '../store/actions/food';
 import {
   StyleSheet,
   Text,
@@ -11,8 +13,8 @@ import TextInput from '../components/CustomTextInput';
 import colors from '../constants/colors';
 
 const AddFoodManuallyScreen = props => {
+  const dispatch = useDispatch();
   const [foodName, setFoodName] = useState('');
-  const [foodCategory, setFoodCategory] = useState('Fruit');
   const [foodDescription, setFoodDescription] = useState('');
   const [foodCalories, setFoodCalories] = useState('');
   const [gramsFat, setGramsFat] = useState('');
@@ -22,6 +24,7 @@ const AddFoodManuallyScreen = props => {
   const [gramsSugar, setGramsSugar] = useState('');
   const [servingSize, setServingSize] = useState('');
   const [formType, setFormType] = useState('calories');
+  const mealOrder = useRef(props.route.params.mealOrder);
 
   let ButtonComponent = TouchableOpacity;
 
@@ -30,16 +33,12 @@ const AddFoodManuallyScreen = props => {
   }
 
   const submitForm = useCallback(() => {
-    if (formType === 'calories') {
-      console.log(`submiting ${foodName} as calories`);
-    } else {
-      console.log(`submiting ${foodName} as macronutrients`);
-    }
+    console.log('Submiting!');
     props.navigation.goBack();
   }, [
     foodName,
+    mealOrder.current,
     foodDescription,
-    foodCategory,
     foodCalories,
     gramsFat,
     gramsCarbs,
@@ -59,28 +58,34 @@ const AddFoodManuallyScreen = props => {
   return (
     <View style={styles.screen}>
       <View style={styles.inputSwitch}>
-        <ButtonComponent
+        <View
           style={
             formType === 'macronutrients'
               ? styles.formSwitchButtonInactive
               : styles.formSwitchButton
           }
-          onPress={() => setFormType('calories')}
-          disabled={formType === 'calories' && true}
         >
-          <Text style={styles.inputSwitchButtonText}>Calories</Text>
-        </ButtonComponent>
-        <ButtonComponent
+          <ButtonComponent
+            onPress={() => setFormType('calories')}
+            disabled={formType === 'calories' && true}
+          >
+            <Text style={styles.inputSwitchButtonText}>Calories</Text>
+          </ButtonComponent>
+        </View>
+        <View
           style={
             formType === 'calories'
               ? styles.formSwitchButtonInactive
               : styles.formSwitchButton
           }
-          onPress={() => setFormType('macronutrients')}
-          disabled={formType === 'macronutrients' && true}
         >
-          <Text style={styles.inputSwitchButtonText}>Macronutrients</Text>
-        </ButtonComponent>
+          <ButtonComponent
+            onPress={() => setFormType('macronutrients')}
+            disabled={formType === 'macronutrients' && true}
+          >
+            <Text style={styles.inputSwitchButtonText}>Macronutrients</Text>
+          </ButtonComponent>
+        </View>
       </View>
       <TextInput
         placeholder="Food Name"

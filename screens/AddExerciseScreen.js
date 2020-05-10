@@ -9,7 +9,11 @@ const AddExerciseScreen = props => {
     <View style={styles.screen}>
       <View style={styles.inputContainer}>
         <CustomTextInput placeholder="Search Exercises" style={styles.input} />
-        <CustomButton iconName="ios-search" onPress={() => {}} />
+        <CustomButton
+          style={styles.searchButton}
+          iconName="ios-search"
+          onPress={() => {}}
+        />
       </View>
       <Button
         color={colors.accent}
@@ -36,4 +40,10 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   search: {},
+  searchButton: {
+    backgroundColor: 'white',
+    borderColor: colors.accent,
+    borderBottomWidth: 1,
+    flex: 1,
+  },
 });

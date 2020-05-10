@@ -6,9 +6,9 @@ import MealTypeButton from '../components/MealTypeButton';
 const MealTypeScreen = props => {
   // const [mealType, setMealType] = useState('snack');
 
-  const submitMealType = mealType => {
+  const submitMealOrder = mealOrder => {
     props.navigation.navigate('AddFood', {
-      mealType: mealType,
+      mealOrder: mealOrder,
     });
   };
 
@@ -17,20 +17,11 @@ const MealTypeScreen = props => {
       <View style={styles.mealTypeContainer}>
         <MealTypeButton
           mealType="Breakfast"
-          onPress={() => submitMealType('Breakfast')}
+          onPress={() => submitMealOrder(0)}
         />
-        <MealTypeButton
-          mealType="Lunch"
-          onPress={() => submitMealType('Lunch')}
-        />
-        <MealTypeButton
-          mealType="Dinner"
-          onPress={() => submitMealType('Dinner')}
-        />
-        <MealTypeButton
-          mealType="Snack"
-          onPress={() => submitMealType('Snacks')}
-        />
+        <MealTypeButton mealType="Lunch" onPress={() => submitMealOrder(1)} />
+        <MealTypeButton mealType="Dinner" onPress={() => submitMealOrder(2)} />
+        <MealTypeButton mealType="Snack" onPress={() => submitMealOrder(3)} />
       </View>
     </View>
   );

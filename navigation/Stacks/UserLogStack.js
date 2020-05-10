@@ -6,6 +6,11 @@ import AddFoodManuallyScreen from '../../screens/AddFoodManuallyScreen';
 import HeaderButton from '../../components/HeaderButton';
 import colors from '../../constants/colors';
 import MealTypeScreen from '../../screens/MealTypeScreen';
+
+import BarcodeFoodScreen from '../../screens/BarcodeFoodScreen';
+import DisplayFoodScreen from '../../screens/DisplayFoodScreen';
+import { mealOrders } from '../../constants/food';
+
 const Stack = createStackNavigator();
 
 const UserLogStack = props => {
@@ -47,11 +52,15 @@ const UserLogStack = props => {
         name="AddFood"
         component={AddFoodScreen}
         options={({ navigation, route }) => ({
-          title: `Add ${route.params.mealType}`,
+          title: `Add ${mealOrders[route.params.mealOrder]}`,
           headerRight: () => (
             <HeaderButton
               headerRight
-              onPress={() => console.log('Barcode Camera Scan!')}
+              onPress={() =>
+                navigation.navigate('FoodBarcodeScan', {
+                  mealOrder: route.params.mealOrder,
+                })
+              }
               iconName="ios-barcode"
             />
           ),
@@ -67,6 +76,13 @@ const UserLogStack = props => {
         })}
       />
       <Stack.Screen
+        name="FoodBarcodeScan"
+        component={BarcodeFoodScreen}
+        options={{
+          title: 'Find Food',
+        }}
+      />
+      <Stack.Screen
         name="AddFoodManually"
         component={AddFoodManuallyScreen}
         options={({ navigation, route }) => ({
@@ -74,10 +90,33 @@ const UserLogStack = props => {
           headerRight: () => (
             <HeaderButton
               headerRight
-              onPress={() => route.params.submitForm()}
+              onPress={route.params.submitForm}
               iconName="ios-checkmark"
             />
           ),
+        })}
+      />
+      <Stack.Screen
+        name="DisplayFood"
+        component={DisplayFoodScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.foodName,
+          headerRight:
+            route.params.displayType === 'user'
+              ? () => (
+                  <HeaderButton
+                    headerRight
+                    onPress={route.params.saveFood}
+                    iconName="ios-save"
+                  />
+                )
+              : () => (
+                  <HeaderButton
+                    headerRight
+                    onPress={route.params.submitForm}
+                    iconName="ios-checkmark"
+                  />
+                ),
         })}
       />
     </Stack.Navigator>
