@@ -1,23 +1,43 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import UserLogStack from './Stacks/UserLogStack';
 import ExerciseStack from './Stacks/ExercisesStack';
 import SummaryStack from './Stacks/SummaryStack';
-import { tabBarOptions } from '../constants/navigationStyle';
+import {
+  tabBarOptions,
+  materialTabOptions,
+} from '../constants/navigationStyle';
+import colors from '../constants/colors';
 
-const BottomTabs = createBottomTabNavigator();
+let BottomTabs = createBottomTabNavigator();
+
+if (Platform.OS === 'android') {
+  BottomTabs = createMaterialBottomTabNavigator();
+}
 
 const MyPlanTabs = props => {
   return (
-    <BottomTabs.Navigator tabBarOptions={tabBarOptions}>
+    <BottomTabs.Navigator
+      tabBarOptions={tabBarOptions}
+      options={materialTabOptions}
+      activeColor="white"
+      shifting={true}
+      barStyle={{ backgroundColor: colors.primary }}
+    >
       <BottomTabs.Screen
         name="UserLog"
         component={UserLogStack}
         options={{
           title: 'Your Log',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons color={color} size={size} name="ios-create" />
+            <Ionicons
+              color={color}
+              size={23}
+              name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+            />
           ),
         }}
       />
@@ -27,7 +47,11 @@ const MyPlanTabs = props => {
         options={{
           title: 'Exercise',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons color={color} size={size} name="ios-bicycle" />
+            <Ionicons
+              color={color}
+              size={23}
+              name={Platform.OS === 'android' ? 'md-bicycle' : 'ios-bicycle'}
+            />
           ),
         }}
       />
@@ -37,7 +61,13 @@ const MyPlanTabs = props => {
         options={{
           title: 'Summary',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons color={color} size={size} name="ios-clipboard" />
+            <Ionicons
+              color={color}
+              size={23}
+              name={
+                Platform.OS === 'android' ? 'md-clipboard' : 'ios-clipboard'
+              }
+            />
           ),
         }}
       />

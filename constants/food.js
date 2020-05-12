@@ -4,15 +4,8 @@ export const nutrientNames = {
   carbohydrates: 'Carbohydrates',
   protein: 'Protein',
   sugar: 'Sugar',
+  alcohol: 'Alcohol',
 };
-
-/**
- * Food nutrient model
- * {
- *  nutrientName: 'Calories',
- *  value: 23
- * }
- */
 
 export const mealOrders = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
@@ -22,6 +15,7 @@ export const nutriendIdsFoodCentral = {
   '1005': nutrientNames.carbohydrates,
   '2000': nutrientNames.sugar,
   '1003': nutrientNames.protein,
+  '1018': nutrientNames.alcohol,
 };
 
 export const nutrientNamesOpenFoodFacts = {
@@ -35,3 +29,5 @@ export const nutrientNamesOpenFoodFacts = {
   sugars_value: nutrientNames.sugar,
   proteins_value: nutrientNames.protein,
 };
+
+export const dateFormat = 'MMM Do YYYY';

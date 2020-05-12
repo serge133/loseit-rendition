@@ -20,7 +20,6 @@ const SummaryStack = props => {
           title: 'Summary',
           headerLeft: () => (
             <HeaderButton
-              headerLeft
               onPress={navigation.toggleDrawer}
               iconName="ios-menu"
             />

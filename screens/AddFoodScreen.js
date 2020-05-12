@@ -5,47 +5,44 @@ import {
   Button,
   FlatList,
   Text,
-  TouchableOpacity,
+  // TouchableOpacity,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTextInput from '../components/CustomTextInput';
 import colors from '../constants/colors';
-import CustomButton from '../components/CustomButton';
+// import CustomButton from '../components/CustomButton';
 import * as foodActions from '../store/actions/food';
 import { extractNutrientsFromFoodCentral } from '../functions/extractNutrients';
 import FoodItem from '../components/FoodItem';
-import calculateCaloriesFromNutrients from '../functions/calculateCaloriesFromNutrients';
+import { calculateCaloriesFromNutrients } from '../functions/food';
 
 const AddFoodScreen = props => {
   const [foodSearch, setFoodSearch] = useState('');
   const dispatch = useDispatch();
   const foodList = useSelector(state => state.food.foodList);
 
-  const searchFood = () => {
-    dispatch(foodActions.getFoods(foodSearch, 50));
+  const searchFood = search => {
+    setFoodSearch(search);
+    dispatch(foodActions.getFoods(search, 25));
   };
+
+  // console.log(props);
 
   return (
     <View style={styles.screen}>
-      <View style={styles.inputContainer}>
-        <CustomTextInput
-          placeholder="Search Food"
-          style={styles.input}
-          onChangeText={text => setFoodSearch(text)}
-        />
-        <CustomButton
-          style={styles.searchButton}
-          iconName="ios-search"
-          onPress={searchFood}
-        />
-      </View>
+      <CustomTextInput
+        placeholder="Search Food"
+        style={styles.input}
+        value={foodSearch}
+        onChangeText={text => searchFood(text)}
+      />
       <Button
         title="Add Food Manually"
         color={colors.accent}
         onPress={() => {
           props.navigation.navigate('AddFoodManually', {
             submitForm: () => {},
-            mealOrder: props.route.params.mealOrder,
+            mealOrder: props.mealOrder,
           });
         }}
       />
@@ -62,6 +59,7 @@ const AddFoodScreen = props => {
               description={itemData.item.description}
               brandOwner={itemData.item.brandOwner}
               calories={calories}
+              displayOnly
               handlePress={() => {
                 props.navigation.navigate('DisplayFood', {
                   mealOrder: props.route.params.mealOrder,
@@ -74,6 +72,7 @@ const AddFoodScreen = props => {
                   ingredients: itemData.item.ingredients,
                   foodAmount: 100,
                   displayType: 'adding',
+                  servingUnit: 'grams',
                 });
               }}
             />
@@ -90,21 +89,16 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   input: {
-    width: '80%',
+    width: '100%',
   },
-  search: {
-    flex: 1,
-  },
-  searchButton: {
-    backgroundColor: 'white',
-    borderColor: colors.accent,
-    borderBottomWidth: 1,
-  },
+  // search: {
+  //   flex: 1,
+  // },
+  // searchButton: {
+  //   borderColor: colors.accent,
+  //   borderBottomWidth: 1,
+  // },
   // foodSearchItem: {
   //   paddingHorizontal: 5,
   //   paddingVertical: 10,

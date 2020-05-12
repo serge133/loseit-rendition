@@ -1,14 +1,18 @@
+import moment from 'moment';
+import { dateFormat } from '../../constants/food';
 import {
   GET_FOODS,
   ADD_FOOD_ITEM,
   GET_USER_FOODS,
   DELETE_FOOD_ITEM,
   EDIT_FOOD_ITEM,
+  TOGGLE_FAVORITE,
 } from '../actions/food';
 
 const initialState = {
   foodList: [],
   userFoodList: [],
+  displayUserFoodListDate: moment().format(dateFormat),
 };
 
 const getFoods = (state, action) => {
@@ -19,21 +23,18 @@ const getFoods = (state, action) => {
   };
 };
 
-const addFoodItem = (state, action) => {
-  const { foodItem } = action;
-  // console.log(foodItem);
+const addFoodItem = (state, { foodItem }) => {
   return {
     ...state,
     userFoodList: state.userFoodList.concat(foodItem),
   };
 };
 
-const getUserFoods = (state, action) => {
-  const { userFoodList } = action;
-  // console.log(userFoodList);
+const getUserFoods = (state, { userFoodList, date }) => {
   return {
     ...state,
     userFoodList: userFoodList,
+    displayUserFoodListDate: date,
   };
 };
 
@@ -61,6 +62,21 @@ const editFoodItem = (state, action) => {
   };
 };
 
+const toggleFavorite = (state, { foodId }) => {
+  const updatedUserFoodList = [...state.userFoodList];
+  const toggleIndex = updatedUserFoodList.findIndex(
+    foodItem => foodItem.id === foodId
+  );
+  if (toggleIndex < 0) throw Error('TOGGLE favorite is not working');
+  updatedUserFoodList[toggleIndex].isFavorite = !updatedUserFoodList[
+    toggleIndex
+  ].isFavorite;
+  return {
+    ...state,
+    userFoodList: updatedUserFoodList,
+  };
+};
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case GET_FOODS:
@@ -73,7 +89,8 @@ export default (state = initialState, action) => {
       return deleteFoodItem(state, action);
     case EDIT_FOOD_ITEM:
       return editFoodItem(state, action);
-
+    case TOGGLE_FAVORITE:
+      return toggleFavorite(state, action);
     default:
       return state;
   }

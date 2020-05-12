@@ -20,7 +20,6 @@ const ExerciseGoalsStack = props => {
           title: 'Exercise Goals',
           headerLeft: () => (
             <HeaderButton
-              headerLeft
               iconName="ios-menu"
               onPress={navigation.toggleDrawer}
             />

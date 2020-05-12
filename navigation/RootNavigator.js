@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import SettingsStack from './Stacks/SettingsStack';
 import MyGoalsTabs from './MyGoalsTabs';
+import { Platform } from 'react-native';
 
 const Drawer = createDrawerNavigator();
 
@@ -21,7 +22,11 @@ const RootNavigator = () => {
         options={{
           title: 'My Plan',
           drawerIcon: ({ color }) => (
-            <Ionicons color={color} size={23} name="ios-create" />
+            <Ionicons
+              color={color}
+              size={23}
+              name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+            />
           ),
         }}
       />
@@ -34,7 +39,11 @@ const RootNavigator = () => {
             <Ionicons
               color={color}
               size={23}
-              name="ios-checkmark-circle-outline"
+              name={
+                Platform.OS === 'android'
+                  ? 'md-checkmark-circle-outline'
+                  : 'ios-checkmark-circle-outline'
+              }
             />
           ),
         }}
@@ -45,7 +54,11 @@ const RootNavigator = () => {
         options={{
           title: 'Settings',
           drawerIcon: ({ color }) => (
-            <Ionicons color={color} size={23} name="ios-settings" />
+            <Ionicons
+              color={color}
+              size={23}
+              name={Platform.OS === 'android' ? 'md-settings' : 'ios-settings'}
+            />
           ),
         }}
       />

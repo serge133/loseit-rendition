@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as foodActions from '../store/actions/food';
 import {
   StyleSheet,
@@ -11,19 +11,22 @@ import {
 } from 'react-native';
 import TextInput from '../components/CustomTextInput';
 import colors from '../constants/colors';
+import {
+  averageNutrientsFromCalories,
+  formFoodNutrients,
+} from '../functions/food';
 
 const AddFoodManuallyScreen = props => {
   const dispatch = useDispatch();
+  const date = useSelector(state => state.food.displayUserFoodListDate);
   const [foodName, setFoodName] = useState('');
   const [foodDescription, setFoodDescription] = useState('');
   const [foodCalories, setFoodCalories] = useState('');
   const [gramsFat, setGramsFat] = useState('');
   const [gramsCarbs, setGramsCarbs] = useState('');
   const [gramsProtein, setGramsProtein] = useState('');
-  const [gramsFiber, setGramsFiber] = useState('');
-  const [gramsSugar, setGramsSugar] = useState('');
-  const [servingSize, setServingSize] = useState('');
-  const [formType, setFormType] = useState('calories');
+  const [servingSize, setServingSize] = useState('100');
+  const [formType, setFormType] = useState('calorie');
   const mealOrder = useRef(props.route.params.mealOrder);
 
   let ButtonComponent = TouchableOpacity;
@@ -33,7 +36,24 @@ const AddFoodManuallyScreen = props => {
   }
 
   const submitForm = useCallback(() => {
-    console.log('Submiting!');
+    let foodNutrients = averageNutrientsFromCalories(parseInt(foodCalories));
+    if (formType === 'macronutrient') {
+      foodNutrients = formFoodNutrients(gramsFat, gramsCarbs, gramsProtein);
+    }
+    dispatch(
+      foodActions.addFoodItem(
+        foodName,
+        '',
+        mealOrder.current,
+        '',
+        foodDescription,
+        servingSize,
+        foodNutrients,
+        servingSize,
+        'grams',
+        date
+      )
+    );
     props.navigation.goBack();
   }, [
     foodName,
@@ -43,10 +63,11 @@ const AddFoodManuallyScreen = props => {
     gramsFat,
     gramsCarbs,
     gramsProtein,
-    gramsFiber,
-    gramsSugar,
     servingSize,
     formType,
+    formFoodNutrients,
+    averageNutrientsFromCalories,
+    date,
   ]);
 
   useEffect(() => {
@@ -60,28 +81,28 @@ const AddFoodManuallyScreen = props => {
       <View style={styles.inputSwitch}>
         <View
           style={
-            formType === 'macronutrients'
+            formType === 'macronutrient'
               ? styles.formSwitchButtonInactive
               : styles.formSwitchButton
           }
         >
           <ButtonComponent
-            onPress={() => setFormType('calories')}
-            disabled={formType === 'calories' && true}
+            onPress={() => setFormType('calorie')}
+            disabled={formType === 'calorie' && true}
           >
             <Text style={styles.inputSwitchButtonText}>Calories</Text>
           </ButtonComponent>
         </View>
         <View
           style={
-            formType === 'calories'
+            formType === 'calorie'
               ? styles.formSwitchButtonInactive
               : styles.formSwitchButton
           }
         >
           <ButtonComponent
-            onPress={() => setFormType('macronutrients')}
-            disabled={formType === 'macronutrients' && true}
+            onPress={() => setFormType('macronutrient')}
+            disabled={formType === 'macronutrient' && true}
           >
             <Text style={styles.inputSwitchButtonText}>Macronutrients</Text>
           </ButtonComponent>
@@ -104,7 +125,7 @@ const AddFoodManuallyScreen = props => {
         autoCorrect
         returnKeyType="next"
       />
-      {formType === 'calories' ? (
+      {formType === 'calorie' ? (
         <View style={styles.caloriesForm}>
           <TextInput
             placeholder="Calories"
@@ -142,21 +163,11 @@ const AddFoodManuallyScreen = props => {
         </View>
       )}
       <TextInput
-        placeholder="Grams of Fiber"
-        onChangeText={text => setGramsFiber(text)}
-        keyboardType="decimal-pad"
-        returnKeyType="next"
-      />
-      <TextInput
-        placeholder="Grams of Sugar"
-        onChangeText={text => setGramsSugar(text)}
-        keyboardType="decimal-pad"
-        returnKeyType="next"
-      />
-      <TextInput
         placeholder="Serving Size (Grams)"
         onChangeText={text => setServingSize(text)}
+        value={servingSize}
         keyboardType="decimal-pad"
+        returnKeyType="done"
       />
     </View>
   );

@@ -5,6 +5,7 @@ export const ADD_FOOD_ITEM = 'ADD_FOOD_ITEM';
 export const GET_USER_FOODS = 'GET_USER_FOODS';
 export const DELETE_FOOD_ITEM = 'DELETE_FOOD_ITEM';
 export const EDIT_FOOD_ITEM = 'EDIT_FOOD_ITEM';
+export const TOGGLE_FAVORITE = 'TOGGLE_FAVORITE';
 
 export const getFoods = (search, pageSize) => {
   return async dispatch => {
@@ -33,12 +34,14 @@ export const addFoodItem = (
   foodDescription,
   servingSize,
   foodNutrients,
-  foodAmount
+  foodAmount,
+  servingUnit,
+  date
 ) => {
   return async dispatch => {
     // * Call to database is here
     const response = await Axios.post(
-      'https://central-rush-249500.firebaseio.com/userFoodList.json',
+      `https://central-rush-249500.firebaseio.com/userFoodList/${date}.json`,
       {
         foodName: foodName,
         brandOwner: brandOwner,
@@ -48,6 +51,8 @@ export const addFoodItem = (
         servingSize: servingSize,
         foodNutrients: foodNutrients,
         foodAmount: foodAmount,
+        servingUnit: servingUnit,
+        isFavorite: false,
       }
     );
 
@@ -62,7 +67,9 @@ export const addFoodItem = (
       foodDescription,
       servingSize,
       foodNutrients,
-      foodAmount
+      foodAmount,
+      servingUnit,
+      false
     );
     dispatch({
       type: ADD_FOOD_ITEM,
@@ -71,38 +78,55 @@ export const addFoodItem = (
   };
 };
 
-export const getUserFoods = () => {
+export const getUserFoods = (date /** moment format */) => {
   return async dispatch => {
-    const response = await Axios.get(
-      'https://central-rush-249500.firebaseio.com/userFoodList.json'
-    );
-    const rawUserFoodList = response.data;
-    const userFoodListKeys = Object.keys(rawUserFoodList);
-    const userFoodList = [];
-    for (let key of userFoodListKeys) {
-      const foodItem = rawUserFoodList[key];
-      userFoodList.push({
-        id: key,
-        foodName: foodItem.foodName,
-        brandOwner: foodItem.brandOwner,
-        mealOrder: foodItem.mealOrder,
-        foodCategory: foodItem.foodCategory,
-        foodDescription: foodItem.foodDescription,
-        servingSize: foodItem.servingSize,
-        foodNutrients: foodItem.foodNutrients,
-        foodAmount: foodItem.foodAmount,
+    try {
+      const response = await Axios.get(
+        `https://central-rush-249500.firebaseio.com/userFoodList/${date}.json`
+      );
+      const rawUserFoodList = response.data;
+      const userFoodListKeys = Object.keys(rawUserFoodList);
+      const userFoodList = [];
+      for (let key of userFoodListKeys) {
+        const foodItem = rawUserFoodList[key];
+        userFoodList.push(
+          new FoodItem(
+            key,
+            foodItem.foodName,
+            foodItem.brandOwner,
+            foodItem.mealOrder,
+            foodItem.foodCategory,
+            foodItem.foodDescription,
+            foodItem.servingSize,
+            foodItem.foodNutrients,
+            foodItem.foodAmount,
+            foodItem.servingUnit,
+            foodItem.isFavorite
+          )
+        );
+      }
+      dispatch({
+        type: GET_USER_FOODS,
+        userFoodList: userFoodList,
+        date: date,
+      });
+    } catch (err) {
+      /**
+       * If there is not entries under the date in the database
+       * then it goes here and makes an empty array under the new date
+       */
+      dispatch({
+        type: GET_USER_FOODS,
+        userFoodList: [],
+        date: date,
       });
     }
-    dispatch({
-      type: GET_USER_FOODS,
-      userFoodList: userFoodList,
-    });
   };
 };
 
-export const deleteFoodItem = foodId => {
+export const deleteFoodItem = (foodId, date) => {
   Axios.delete(
-    `https://central-rush-249500.firebaseio.com/userFoodList/${foodId}.json`
+    `https://central-rush-249500.firebaseio.com/userFoodList/${date}/${foodId}.json`
   );
   return {
     type: DELETE_FOOD_ITEM,
@@ -110,10 +134,10 @@ export const deleteFoodItem = foodId => {
   };
 };
 
-export const editFoodItem = (foodId, foodAmount, foodNutrients) => {
+export const editFoodItem = (foodId, foodAmount, foodNutrients, date) => {
   return async dispatch => {
     const response = await Axios.patch(
-      `https://central-rush-249500.firebaseio.com/userFoodList/${foodId}.json`,
+      `https://central-rush-249500.firebaseio.com/userFoodList/${date}/${foodId}.json`,
       {
         foodAmount: foodAmount,
         foodNutrients: foodNutrients,
@@ -125,5 +149,17 @@ export const editFoodItem = (foodId, foodAmount, foodNutrients) => {
       foodAmount: foodAmount,
       foodNutrients: foodNutrients,
     });
+  };
+};
+
+export const toggleFavorite = (foodId, isFavorite, date) => {
+  Axios.patch(
+    `https://central-rush-249500.firebaseio.com/userFoodList/${date}/${foodId}.json`,
+    { isFavorite: !isFavorite }
+  );
+
+  return {
+    type: TOGGLE_FAVORITE,
+    foodId: foodId,
   };
 };

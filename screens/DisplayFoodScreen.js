@@ -1,14 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as foodActions from '../store/actions/food';
 import colors from '../constants/colors';
 import Card from '../components/Card';
-import calculateCaloriesFromNutrients from '../functions/calculateCaloriesFromNutrients';
-import calculateNutrients from '../functions/calculateNutrients';
+// import calculateCaloriesFromNutrients from '../functions/calculateCaloriesFromNutrients';
+// import calculateNutrients from '../functions/calculateNutrients';
+import {
+  calculateNutrients,
+  calculateCaloriesFromNutrients,
+} from '../functions/food';
 import CustomTextInput from '../components/CustomTextInput';
 
 const DisplayFoodScreen = props => {
+  const date = useSelector(state => state.food.displayUserFoodListDate);
+
   const {
     foodId,
     foodName,
@@ -19,6 +25,7 @@ const DisplayFoodScreen = props => {
     foodNutrients,
     ingredients,
     foodAmount,
+    servingUnit,
     // adding or user
     displayType,
   } = props.route.params;
@@ -41,17 +48,28 @@ const DisplayFoodScreen = props => {
         '',
         servingSize,
         nutrients,
-        grams
+        grams,
+        servingUnit,
+        date
       )
     );
     props.navigation.goBack();
-  }, [foodName, brandOwner, mealOrder, grams, nutrients, servingSize]);
+  }, [
+    foodName,
+    brandOwner,
+    mealOrder,
+    grams,
+    nutrients,
+    servingSize,
+    servingUnit,
+    date,
+  ]);
 
   // Only if the user has the food
   const saveFood = useCallback(() => {
-    dispatch(foodActions.editFoodItem(foodId, grams, nutrients));
+    dispatch(foodActions.editFoodItem(foodId, grams, nutrients, date));
     props.navigation.goBack();
-  }, [foodId, grams, nutrients]);
+  }, [foodId, grams, nutrients, date]);
 
   useEffect(() => {
     props.navigation.setParams({
@@ -61,7 +79,9 @@ const DisplayFoodScreen = props => {
   }, [submitForm, saveFood]);
 
   const handleChangeFoodAmount = text => {
-    setNutrients(calculateNutrients(parseInt(text), foodAmount, foodNutrients));
+    setNutrients(
+      calculateNutrients(parseFloat(text), foodAmount, foodNutrients)
+    );
     setGrams(text);
   };
 
@@ -72,7 +92,9 @@ const DisplayFoodScreen = props => {
         <Text style={styles.foodCalories}>
           {calculateCaloriesFromNutrients(nutrients)}
         </Text>
-        <Text>Serving Size: {servingSize} grams/ml</Text>
+        <Text>
+          Serving Size: {servingSize} {servingUnit}
+        </Text>
         <ScrollView style={styles.macronutrients}>
           {nutrients.map(fn => (
             <Text key={fn.nutrientName} style={styles[fn.nutrientName]}>
@@ -80,12 +102,15 @@ const DisplayFoodScreen = props => {
             </Text>
           ))}
           <Text>Ingredients: {ingredients}</Text>
-          <CustomTextInput
-            keyboardType="decimal-pad"
-            value={grams.toString()}
-            style={styles.input}
-            onChangeText={text => handleChangeFoodAmount(text)}
-          />
+          <View style={styles.servingSizeInput}>
+            <CustomTextInput
+              keyboardType="decimal-pad"
+              value={grams.toString()}
+              style={styles.input}
+              onChangeText={text => handleChangeFoodAmount(text)}
+            />
+            <Text>{servingUnit}</Text>
+          </View>
         </ScrollView>
       </Card>
     </View>

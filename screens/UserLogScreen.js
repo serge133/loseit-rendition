@@ -7,14 +7,16 @@ import FoodItem from '../components/FoodItem';
 import { getUserFoods } from '../store/actions/food';
 import { mealOrders } from '../constants/food';
 import { Ionicons } from '@expo/vector-icons';
-import calculateCaloriesFromNutrients from '../functions/calculateCaloriesFromNutrients';
+import moment from 'moment';
+import { dateFormat } from '../constants/food';
 
 const MyPlanScreen = props => {
   const userFoodList = useSelector(state => state.food.userFoodList);
   const dispatch = useDispatch();
+  const date = useSelector(state => state.food.displayUserFoodListDate);
   // * Database call to get user foods
   useEffect(() => {
-    dispatch(getUserFoods());
+    dispatch(getUserFoods(moment().format(dateFormat)));
   }, []);
 
   const sortUserFoodListByMealOrder = userFoodList.sort(
@@ -66,16 +68,25 @@ const MyPlanScreen = props => {
                   ingredients: '',
                   foodAmount: itemData.item.foodAmount,
                   displayType: 'user',
+                  servingUnit: itemData.item.servingUnit,
                 });
               }}
               description={itemData.item.foodName}
               brandOwner={itemData.item.brandOwner}
-              calories={calculateCaloriesFromNutrients(
-                itemData.item.foodNutrients
-              )}
+              calories={itemData.item.calories}
               handleDelete={() => {
-                dispatch(foodActions.deleteFoodItem(itemData.item.id));
+                dispatch(foodActions.deleteFoodItem(itemData.item.id, date));
               }}
+              handleFavorite={() =>
+                dispatch(
+                  foodActions.toggleFavorite(
+                    itemData.item.id,
+                    itemData.item.isFavorite,
+                    date
+                  )
+                )
+              }
+              isFavorite={itemData.item.isFavorite}
             />
           </Fragment>
         )}
@@ -101,8 +112,8 @@ const styles = StyleSheet.create({
   seperator: {
     width: '100%',
     backgroundColor: colors.accent,
-    paddingVertical: 5,
-    paddingHorizontal: 5,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
   },
   seperatorText: {
     color: 'white',

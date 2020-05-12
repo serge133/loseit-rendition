@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   TouchableNativeFeedback,
   Platform,
+  Alert,
 } from 'react-native';
 import colors from '../constants/colors';
 import { SwipeRow } from 'react-native-swipe-list-view';
@@ -18,19 +19,59 @@ const FoodItem = props => {
     ButtonComponent = TouchableNativeFeedback;
   }
 
+  const handleDelete = () => {
+    Alert.alert(
+      'Deleting Food Item',
+      'Are you sure you want to delete this food?',
+      [
+        { text: 'Cancel', style: 'default' },
+        { text: 'Delete', style: 'destructive', onPress: props.handleDelete },
+      ]
+    );
+  };
+
+  // const handleFavorite = () => {
+  //   Alert.alert("Making Favorite", "Once a food is made favorite you will not be able to unfavorite it unless you remove it from favorites. This is done to prevent ")
+  // }
+
   return (
-    <SwipeRow rightOpenValue={-75}>
-      <View style={styles.hiddenRow}>
-        <TouchableHighlight onPress={props.handleDelete}>
-          <View style={styles.hiddenBtn}>
-            <Ionicons
-              name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
-              size={23}
-              color="white"
-            />
-          </View>
-        </TouchableHighlight>
-      </View>
+    <SwipeRow
+      rightOpenValue={-150}
+      disableLeftSwipe={props.displayOnly}
+      disableRightSwipe={true}
+    >
+      {!props.displayOnly ? (
+        <View style={styles.hiddenRow}>
+          <TouchableHighlight onPress={props.handleFavorite}>
+            <View style={styles.favoriteBtn}>
+              <Ionicons
+                name={
+                  Platform.OS === 'android'
+                    ? props.isFavorite
+                      ? 'md-star'
+                      : 'md-star-outline'
+                    : props.isFavorite
+                    ? 'ios-star'
+                    : 'ios-star-outline'
+                }
+                size={23}
+                color="white"
+              />
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={handleDelete}>
+            <View style={styles.deleteBtn}>
+              <Ionicons
+                name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
+                size={23}
+                color="white"
+              />
+            </View>
+          </TouchableHighlight>
+        </View>
+      ) : (
+        <View></View>
+      )}
       <ButtonComponent onPress={props.handlePress}>
         <View style={styles.foodItem}>
           <View style={styles.foodDetails}>
@@ -46,7 +87,7 @@ const FoodItem = props => {
 
 const styles = StyleSheet.create({
   foodItem: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     backgroundColor: 'white',
     borderBottomColor: colors.accent,
@@ -70,14 +111,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   hiddenRow: {
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    height: '100%',
   },
-  hiddenBtn: {
-    flex: 1,
+  deleteBtn: {
+    backgroundColor: 'red',
+    // flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     width: 75,
-    backgroundColor: 'red',
+    height: '100%',
+  },
+  favoriteBtn: {
+    backgroundColor: colors.primary,
+    // flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 75,
+    height: '100%',
   },
   hiddenBtnText: {
     color: 'white',

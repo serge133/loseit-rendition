@@ -22,14 +22,12 @@ const ExercisesStack = props => {
           title: 'Exercises',
           headerLeft: () => (
             <HeaderButton
-              headerLeft
               onPress={navigation.toggleDrawer}
               iconName="ios-menu"
             />
           ),
           headerRight: () => (
             <HeaderButton
-              headerRight
               onPress={() => navigation.navigate('AddExercise')}
               iconName="ios-add"
             />

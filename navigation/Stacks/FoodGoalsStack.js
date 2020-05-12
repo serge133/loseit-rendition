@@ -20,7 +20,6 @@ const FoodGoalsStack = props => {
           title: 'Food Goals',
           headerLeft: () => (
             <HeaderButton
-              headerLeft
               onPress={navigation.toggleDrawer}
               iconName="ios-menu"
             />

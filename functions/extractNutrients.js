@@ -1,7 +1,7 @@
 import {
   nutriendIdsFoodCentral,
   nutrientNamesOpenFoodFacts,
-  nutrientNames,
+  // nutrientNames,
 } from '../constants/food';
 
 export const extractNutrientsFromFoodCentral = foodNutrients => {
@@ -16,6 +16,8 @@ export const extractNutrientsFromFoodCentral = foodNutrients => {
     if (fn.nutrientId === 2000) return true;
     // Protein
     if (fn.nutrientId === 1003) return true;
+    // Aclohol, ethyl
+    if (fn.nutrientId === 1018) return true;
   });
 
   const mappedNutrients = filteredNutrients.map(fn => {

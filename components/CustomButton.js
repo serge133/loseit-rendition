@@ -18,13 +18,17 @@ const CustomButton = props => {
   }
 
   return (
-    <View style={styles.buttonContainer}>
-      <ButtonComponent onPress={props.onPress}>
-        <View style={{ ...styles.button, ...props.style }}>
+    // <View style={styles.buttonContainer}>
+    <ButtonComponent style={styles.buttonContainer} onPress={props.onPress}>
+      <View style={{ ...styles.button, ...props.style }}>
+        {props.title ? (
+          <Text style={styles.text}>{props.title}</Text>
+        ) : (
           <Ionicons color={colors.accent} size={30} name={props.iconName} />
-        </View>
-      </ButtonComponent>
-    </View>
+        )}
+      </View>
+    </ButtonComponent>
+    // </View>
   );
 };
 
@@ -35,9 +39,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   button: {
-    // backgroundColor: 'white',
+    backgroundColor: colors.accent,
     height: 50,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text: {
+    color: 'white',
+    fontSize: 16,
   },
 });

@@ -46,6 +46,7 @@ const ScanBarcode = props => {
         ingredients: foodIngredients,
         displayType: 'adding',
         foodAmount: withServing ? servingSize : 1,
+        servingUnit: withServing ? 'grams' : 'package',
       });
     };
     request();

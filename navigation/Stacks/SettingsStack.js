@@ -20,7 +20,6 @@ const SettingsStack = props => {
           title: 'Settings',
           headerLeft: () => (
             <HeaderButton
-              headerLeft
               iconName="ios-menu"
               onPress={navigation.toggleDrawer}
             />

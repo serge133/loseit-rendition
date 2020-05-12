@@ -1,4 +1,7 @@
 import React from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import * as foodActions from '../../store/actions/food';
 import { createStackNavigator } from '@react-navigation/stack';
 import UserLogScreen from '../../screens/UserLogScreen';
 import AddFoodScreen from '../../screens/AddFoodScreen';
@@ -11,9 +14,15 @@ import BarcodeFoodScreen from '../../screens/BarcodeFoodScreen';
 import DisplayFoodScreen from '../../screens/DisplayFoodScreen';
 import { mealOrders } from '../../constants/food';
 
+import moment from 'moment';
+import { dateFormat } from '../../constants/food';
+import AddFoodTabs from './Tabs/AddFoodTabs';
+
 const Stack = createStackNavigator();
 
 const UserLogStack = props => {
+  const date = useSelector(state => state.food.displayUserFoodListDate);
+  const dispatch = useDispatch();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -24,20 +33,49 @@ const UserLogStack = props => {
         name="UserLog"
         component={UserLogScreen}
         options={({ navigation, route }) => ({
-          title: 'Your Log',
+          title: date,
+          headerTitleAlign: 'center',
           headerLeft: () => (
-            <HeaderButton
-              headerLeft
-              onPress={navigation.toggleDrawer}
-              iconName="ios-menu"
-            />
+            <View style={styles.headerRow}>
+              <HeaderButton
+                onPress={navigation.toggleDrawer}
+                iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+              />
+              <HeaderButton
+                style={{ marginLeft: 10 }}
+                iconName={
+                  Platform.OS === 'android' ? 'md-arrow-back' : 'ios-arrow-back'
+                }
+                onPress={() => {
+                  const decrementedDate = moment(date, dateFormat)
+                    .subtract(1, 'days')
+                    .format(dateFormat);
+                  dispatch(foodActions.getUserFoods(decrementedDate));
+                }}
+              />
+            </View>
           ),
           headerRight: () => (
-            <HeaderButton
-              headerRight
-              onPress={() => navigation.navigate('MealType')}
-              iconName="ios-add"
-            />
+            <View style={styles.headerRow}>
+              <HeaderButton
+                style={{ marginRight: 10 }}
+                iconName={
+                  Platform.OS === 'android'
+                    ? 'md-arrow-forward'
+                    : 'ios-arrow-forward'
+                }
+                onPress={() => {
+                  const incrementedDate = moment(date, dateFormat)
+                    .add(1, 'days')
+                    .format(dateFormat);
+                  dispatch(foodActions.getUserFoods(incrementedDate));
+                }}
+              />
+              <HeaderButton
+                onPress={() => navigation.navigate('MealType')}
+                iconName={Platform.OS === 'android' ? 'md-add' : 'ios-add'}
+              />
+            </View>
           ),
         })}
       />
@@ -46,6 +84,7 @@ const UserLogStack = props => {
         component={MealTypeScreen}
         options={({ navigation, route }) => ({
           title: 'Set Meal Time',
+          headerBackTitle: 'Your Log',
         })}
       />
       <Stack.Screen
@@ -55,19 +94,19 @@ const UserLogStack = props => {
           title: `Add ${mealOrders[route.params.mealOrder]}`,
           headerRight: () => (
             <HeaderButton
-              headerRight
               onPress={() =>
                 navigation.navigate('FoodBarcodeScan', {
                   mealOrder: route.params.mealOrder,
                 })
               }
-              iconName="ios-barcode"
+              iconName={
+                Platform.OS === 'android' ? 'md-barcode' : 'ios-barcode'
+              }
             />
           ),
           headerLeft: () => (
             <HeaderButton
-              headerLeft
-              iconName="ios-home"
+              iconName={Platform.OS === 'android' ? 'md-home' : 'ios-home'}
               onPress={() => {
                 navigation.navigate('UserLog');
               }}
@@ -89,9 +128,10 @@ const UserLogStack = props => {
           title: 'Manually Add Food',
           headerRight: () => (
             <HeaderButton
-              headerRight
               onPress={route.params.submitForm}
-              iconName="ios-checkmark"
+              iconName={
+                Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
+              }
             />
           ),
         })}
@@ -105,16 +145,20 @@ const UserLogStack = props => {
             route.params.displayType === 'user'
               ? () => (
                   <HeaderButton
-                    headerRight
                     onPress={route.params.saveFood}
-                    iconName="ios-save"
+                    iconName={
+                      Platform.OS === 'android' ? 'md-save' : 'ios-save'
+                    }
                   />
                 )
               : () => (
                   <HeaderButton
-                    headerRight
                     onPress={route.params.submitForm}
-                    iconName="ios-checkmark"
+                    iconName={
+                      Platform.OS === 'android'
+                        ? 'md-checkmark'
+                        : 'ios-checkmark'
+                    }
                   />
                 ),
         })}
@@ -124,3 +168,9 @@ const UserLogStack = props => {
 };
 
 export default UserLogStack;
+
+const styles = StyleSheet.create({
+  headerRow: {
+    flexDirection: 'row',
+  },
+});
