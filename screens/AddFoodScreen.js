@@ -1,52 +1,29 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Button,
-  FlatList,
-  Text,
-  // TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTextInput from '../components/CustomTextInput';
-import colors from '../constants/colors';
-// import CustomButton from '../components/CustomButton';
 import * as foodActions from '../store/actions/food';
 import { extractNutrientsFromFoodCentral } from '../functions/extractNutrients';
 import FoodItem from '../components/FoodItem';
 import { calculateCaloriesFromNutrients } from '../functions/food';
 
 const AddFoodScreen = props => {
-  const [foodSearch, setFoodSearch] = useState('');
   const dispatch = useDispatch();
   const foodList = useSelector(state => state.food.foodList);
 
   const searchFood = search => {
-    setFoodSearch(search);
+    // setFoodSearch(search);
     dispatch(foodActions.getFoods(search, 25));
   };
-
-  // console.log(props);
 
   return (
     <View style={styles.screen}>
       <CustomTextInput
         placeholder="Search Food"
         style={styles.input}
-        value={foodSearch}
+        // value={foodSearch}
         onChangeText={text => searchFood(text)}
       />
-      <Button
-        title="Add Food Manually"
-        color={colors.accent}
-        onPress={() => {
-          props.navigation.navigate('AddFoodManually', {
-            submitForm: () => {},
-            mealOrder: props.mealOrder,
-          });
-        }}
-      />
-      <Text>Serving size is 100g</Text>
       <FlatList
         keyExtractor={item => item.fdcId.toString()}
         data={foodList}

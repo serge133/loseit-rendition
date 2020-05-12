@@ -89,7 +89,7 @@ const UserLogStack = props => {
       />
       <Stack.Screen
         name="AddFood"
-        component={AddFoodScreen}
+        component={AddFoodTabs}
         options={({ navigation, route }) => ({
           title: `Add ${mealOrders[route.params.mealOrder]}`,
           headerRight: () => (

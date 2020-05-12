@@ -15,6 +15,7 @@ import {
   averageNutrientsFromCalories,
   formFoodNutrients,
 } from '../functions/food';
+import CustomButton from '../components/CustomButton';
 
 const AddFoodManuallyScreen = props => {
   const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const AddFoodManuallyScreen = props => {
     ButtonComponent = TouchableNativeFeedback;
   }
 
-  const submitForm = useCallback(() => {
+  const submitForm = () => {
     let foodNutrients = averageNutrientsFromCalories(parseInt(foodCalories));
     if (formType === 'macronutrient') {
       foodNutrients = formFoodNutrients(gramsFat, gramsCarbs, gramsProtein);
@@ -54,62 +55,44 @@ const AddFoodManuallyScreen = props => {
         date
       )
     );
-    props.navigation.goBack();
-  }, [
-    foodName,
-    mealOrder.current,
-    foodDescription,
-    foodCalories,
-    gramsFat,
-    gramsCarbs,
-    gramsProtein,
-    servingSize,
-    formType,
-    formFoodNutrients,
-    averageNutrientsFromCalories,
-    date,
-  ]);
-
-  useEffect(() => {
-    props.navigation.setParams({
-      submitForm: submitForm,
-    });
-  }, [submitForm]);
+    setFoodName('');
+    setFoodDescription('');
+    setFoodCalories('');
+    setGramsFat('');
+    setGramsCarbs('');
+    setGramsProtein('');
+    setServingSize('100');
+    props.navigation.navigate('Search');
+  };
 
   return (
     <View style={styles.screen}>
       <View style={styles.inputSwitch}>
-        <View
+        <CustomButton
+          onPress={() => setFormType('calorie')}
+          disabled={formType === 'calorie' && true}
           style={
             formType === 'macronutrient'
               ? styles.formSwitchButtonInactive
               : styles.formSwitchButton
           }
-        >
-          <ButtonComponent
-            onPress={() => setFormType('calorie')}
-            disabled={formType === 'calorie' && true}
-          >
-            <Text style={styles.inputSwitchButtonText}>Calories</Text>
-          </ButtonComponent>
-        </View>
-        <View
+          title="Calories"
+        />
+
+        <CustomButton
+          onPress={() => setFormType('macronutrient')}
+          disabled={formType === 'macronutrient' && true}
           style={
             formType === 'calorie'
               ? styles.formSwitchButtonInactive
               : styles.formSwitchButton
           }
-        >
-          <ButtonComponent
-            onPress={() => setFormType('macronutrient')}
-            disabled={formType === 'macronutrient' && true}
-          >
-            <Text style={styles.inputSwitchButtonText}>Macronutrients</Text>
-          </ButtonComponent>
-        </View>
+          title="Macronutrients"
+        />
       </View>
       <TextInput
         placeholder="Food Name"
+        value={foodName}
         onChangeText={text => setFoodName(text)}
         keyboardType="default"
         autoCapitalize="words"
@@ -119,6 +102,7 @@ const AddFoodManuallyScreen = props => {
       <Text>Food Catogory</Text>
       <TextInput
         placeholder="Food Description"
+        value={foodDescription}
         onChangeText={text => setFoodDescription(text)}
         keyboardType="default"
         autoCapitalize="sentences"
@@ -129,6 +113,7 @@ const AddFoodManuallyScreen = props => {
         <View style={styles.caloriesForm}>
           <TextInput
             placeholder="Calories"
+            value={foodCalories}
             onChangeText={text => setFoodCalories(text)}
             keyboardType="decimal-pad"
             returnKeyType="next"
@@ -138,6 +123,7 @@ const AddFoodManuallyScreen = props => {
         <View style={styles.macronutrientForm}>
           <TextInput
             placeholder="Grams of Fat"
+            value={gramsFat}
             onChangeText={text => setGramsFat(text)}
             keyboardType="decimal-pad"
             autoCapitalize="words"
@@ -146,6 +132,7 @@ const AddFoodManuallyScreen = props => {
           />
           <TextInput
             placeholder="Frams of Carbs"
+            value={gramsCarbs}
             onChangeText={text => setGramsCarbs(text)}
             keyboardType="decimal-pad"
             autoCapitalize="words"
@@ -154,6 +141,7 @@ const AddFoodManuallyScreen = props => {
           />
           <TextInput
             placeholder="Grams of Protein"
+            value={gramsProtein}
             onChangeText={text => setGramsProtein(text)}
             keyboardType="decimal-pad"
             autoCapitalize="words"
@@ -164,11 +152,13 @@ const AddFoodManuallyScreen = props => {
       )}
       <TextInput
         placeholder="Serving Size (Grams)"
+        value={servingSize}
         onChangeText={text => setServingSize(text)}
         value={servingSize}
         keyboardType="decimal-pad"
         returnKeyType="done"
       />
+      <CustomButton title="Ok" onPress={submitForm} />
     </View>
   );
 };
@@ -181,18 +171,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
+    height: 40,
   },
   formSwitchButton: {
     flex: 1,
     alignItems: 'center',
     backgroundColor: colors.accent,
-    paddingVertical: 10,
+    // paddingVertical: 20,
   },
   formSwitchButtonInactive: {
     flex: 1,
     alignItems: 'center',
     backgroundColor: colors.accent,
-    paddingVertical: 10,
+    // paddingVertical: 20,
     opacity: 0.3,
   },
   inputSwitchButtonText: {
